@@ -1,0 +1,11 @@
+require "sfdc-connect"
+
+SfdcConnect.sfdc_url="https://test.salesforce.com/services/oauth2/token"
+SfdcConnect.default_credentials =  = SfdcConnect::Credentials.new(
+      "your client id",
+      "your client secret",
+      "your username",
+      "your password")
+
+EXPECTED_TOKEN="The access_token you get back from authenticating to sfdc"
+
