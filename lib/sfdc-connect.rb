@@ -3,27 +3,15 @@ require 'httparty'
 
 module SfdcConnect
 
-  def self.sfdc_url
-    @@sfdc_url
-  end
-
-  def self.sfdc_url=(url)
-    @@sfdc_url=url
-  end
-
-  def self.default_credentials
-    @@default_credentials
-  end
-
-  def self.default_credentials=(credentials)
-    @@default_credentials=credentials
+  class << self
+    attr_accessor :sfdc_login_url, :default_credentials, :sfdc_instance_url
   end
 
   class Authenticator
     include HTTParty
 
     def authenticate(credentials=SfdcConnect.default_credentials)
-      response = self.class.post(SfdcConnect.sfdc_url,
+      response = self.class.post(SfdcConnect.sfdc_login_url,
         query: credentials.to_hash)   
       raise "SFDC Error: #{response['error']} - #{response['error_description']}" if response["error"]
       response["access_token"]
