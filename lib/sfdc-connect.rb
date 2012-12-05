@@ -21,11 +21,12 @@ module SfdcConnect
 
   class Authenticator
     include HTTParty
-    
+
     def authenticate(credentials=SfdcConnect.default_credentials)
-       response = self.class.post(SfdcConnect.sfdc_url,
-        query: credentials.to_hash)        
-       response["access_token"]
+      response = self.class.post(SfdcConnect.sfdc_url,
+        query: credentials.to_hash)   
+      raise "SFDC Error: #{response['error']} - #{response['error_description']}" if response["error"]
+      response["access_token"]
     end
   end
 

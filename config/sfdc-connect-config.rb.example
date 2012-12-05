@@ -6,6 +6,3 @@ SfdcConnect.default_credentials =  = SfdcConnect::Credentials.new(
       "your client secret",
       "your username",
       "your password")
-
-EXPECTED_TOKEN="The access_token you get back from authenticating to sfdc"
-
