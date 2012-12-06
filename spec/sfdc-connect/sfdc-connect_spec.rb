@@ -32,7 +32,7 @@ describe SfdcConnect::SfdcRESTQuery do
     account = TestQuery.retrieve "001V0000006FAyBIAW"
     account.should_not be nil    
     PP.pp account
-    account["Name"].should == "Saratech Inc."
+    account.name == "Saratech Inc."
   end
 
   it "Should handle SOQL queries" do
@@ -51,10 +51,32 @@ describe SfdcConnect::BaseSfdcObject do
     class TestQuery < SfdcConnect::SfdcRESTQuery
       crm_type "Account"
     end
-    sobject = TestQuery.retrieve "001V0000006FAyBIAW"
-    account = SfdcConnect::BaseSfdcObject.new(sobject)
+    account = TestQuery.retrieve "001V0000006FAyBIAW"    
     account.respond_to?(:name).should be true
     account.respond_to?(:foozle).should be false
     account.name.should == "Saratech Inc."
+    PP.pp account
+  end
+
+  it "Test alternate method name support" do
+    class TestQuery < SfdcConnect::SfdcRESTQuery
+      crm_type "Account"
+    end
+
+    account = TestQuery.retrieve "001V0000006FAyBIAW"    
+    account.respond_to?(:numberofemployees).should be true
+    account.respond_to?(:number_of_employees).should be true
+    account.numberofemployees.should == 30
+    account.number_of_employees.should == 30
+    
+    PP.pp account
+  end
+
+  it "Should correctly convert iso8601 dates to DateTiem objects" do
+    class TestQuery < SfdcConnect::SfdcRESTQuery
+      crm_type "Account"
+    end
+    account = TestQuery.retrieve "001V0000006FAyBIAW"
+    account.created_date.kind_of?(DateTime).should be true
   end
 end

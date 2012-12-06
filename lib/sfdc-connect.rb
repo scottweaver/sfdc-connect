@@ -66,7 +66,7 @@ module SfdcConnect
       if(response['records'])
         continue_request(response)
       else
-        response.parsed_response
+        new_sfdc_object_instance(response.parsed_response)
       end
     end
 
@@ -85,6 +85,14 @@ module SfdcConnect
     def self.resource_name
       @crm_type || self.name.split('::')[-1]
     end
+
+    def self.new_sfdc_object_instance(sobject)
+      if(ancestors.include? SfdcConnect::BaseSfdcObject)
+        new(sobject)
+      else
+        BaseSfdcObject.new(sobject)
+      end
+    end
     
   end
   
@@ -99,7 +107,7 @@ module SfdcConnect
 
       def respond_to?(method_id)
         if(!super)
-          @store.include? method_id.to_s
+          @store.include?(method_id.to_s) || @store.include?(method_id.to_s.delete("_"))
         else
           super
         end
@@ -107,10 +115,22 @@ module SfdcConnect
 
       def method_missing(method_id, *arguments, &block)
         if(@store.include? method_id.to_s)
-          @store[method_id.to_s]
+          coherce_value(method_id.to_s, @store[method_id.to_s])
+        elsif(@store.include? method_id.to_s.delete("_"))
+          coherce_value(method_id.to_s.delete("_"), @store[method_id.to_s.delete("_")])
         else
           super
         end
+      end
+
+      private
+
+      def coherce_value(name, value)
+        if(name.include? "date")
+          DateTime.iso8601(value)
+        else
+          value
+        end        
       end
 
   end
