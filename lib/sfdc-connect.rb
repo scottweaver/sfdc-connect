@@ -18,25 +18,35 @@ module SfdcConnect
 
   # Provides basic query and object access support.
   class SfdcRESTQuery
-    include ResponseValidator
+    extend ResponseValidator
     include HTTParty
+
+    @crm_type
+
+    # Use this to the set the SFDC type name (used in object requests)
+    # if your class' name does not match.  This is helpful for custom
+    # objects which always end in '__c' which would force you to have
+    # fairly ugly class names.
+    def self.crm_type(crm_type)
+      @crm_type = crm_type
+    end
 
     # Retrieves an object by its id.  Uses the name of the class as the 
     # object name.
     def self.retrieve(id)
-      do_get resource_url(id)
+      execute_request resource_url(id)
     end
 
     # Retrieves ALL the objects of this type. WARNING, this call can take 
     # a large amount of time to complete and can return a huge dataset.  
     # You have been warned.
     def self.all
-      do_get query_url("SELECT name from #{resource_name}")
+      execute_request query_url("SELECT name from #{resource_name}")
     end
 
     # Executes an arbitrary SOQL query.
     def self.search(soql)
-      do_get query_url(soql)
+      execute_request query_url(soql)
     end
 
     private
@@ -46,15 +56,25 @@ module SfdcConnect
     end
 
     def self.resource_url(id)
-      "/services/data/v26.0/sobjects/#{resource_name}/#{id}?fields=Id,name"
+      url="/services/data/v26.0/sobjects/#{resource_name}/#{id}"
     end
 
-    def self.do_get(url, result=[])
+    def self.execute_request(url, result=[])      
       set_headers            
       response=get(SfdcConnect.sfdc_instance_url+url) 
-      validate_response(response)
+      validate_response(response)      
+      if(response['records'])
+        continue_request(response)
+      else
+        response.parsed_response
+      end
+    end
+
+    # Called when SFDC indicates that there are more results in the
+    # query response than can be returned in one REST request.
+    def self.continue_request(response, result=[])
       result.concat(response['records'])
-      do_get(response['nextRecordsUrl'], result) unless response["done"]
+      execute_request(response['nextRecordsUrl'], result) unless response["done"]
       result
     end
 
@@ -63,14 +83,35 @@ module SfdcConnect
     end
 
     def self.resource_name
-      self.name.split('::')[-1]
+      @crm_type || self.name.split('::')[-1]
     end
     
   end
-
   
   class BaseSfdcObject < SfdcRESTQuery
-      
+      def initialize(sobject={})               
+        @store = sobject.inject({}) do|h, so|                    
+          new_key = so[0].downcase.partition('__c')[0]
+          h[new_key] = so[1]
+          h
+        end
+      end
+
+      def respond_to?(method_id)
+        if(!super)
+          @store.include? method_id.to_s
+        else
+          super
+        end
+      end
+
+      def method_missing(method_id, *arguments, &block)
+        if(@store.include? method_id.to_s)
+          @store[method_id.to_s]
+        else
+          super
+        end
+      end
 
   end
 

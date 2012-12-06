@@ -5,6 +5,8 @@ module SfdcConnect
   class Order < BaseSfdcObject
     include HTTParty
     extend ResponseValidator    
+
+    crm_type 'SAP_Order__c'
     
     def self.orders_for_account(account_id)
       soql= <<-SOQL

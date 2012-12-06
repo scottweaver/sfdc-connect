@@ -8,11 +8,11 @@ describe SfdcConnect::Account do
     account.should_not be nil    
   end
 
-  it "Should be able to retrieve a list of all exsting accounts" do
-    accounts = SfdcConnect::Account.all
-    PP.pp accounts
-    accounts.should_not be nil
+  # it "Should be able to retrieve a list of all exsting accounts" do
+  #   accounts = SfdcConnect::Account.all
+  #   PP.pp accounts
+  #   accounts.should_not be nil
     
-  end
+  # end
 
 end
