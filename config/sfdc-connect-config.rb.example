@@ -6,3 +6,5 @@ SfdcConnect.default_credentials =  = SfdcConnect::Credentials.new(
       "your client secret",
       "your username",
       "your password")
+
+SfdcConnect::Authenticator.set_access_token
