@@ -24,11 +24,11 @@ describe SfdcConnect::Authenticator do
 end
 
 describe SfdcConnect::SfdcRESTQuery do
-  it "Retrieve an object by id" do    
+  it "find an object by id" do    
     class TestQuery < SfdcConnect::SfdcRESTQuery
       crm_type "Account"
     end
-    account = TestQuery.retrieve "001V0000006FAyBIAW"
+    account = TestQuery.find "001V0000006FAyBIAW"
     account.should_not be nil    
     account.name == "Saratech Inc."
   end
@@ -48,7 +48,7 @@ describe SfdcConnect::BaseSfdcObject do
     class TestQuery < SfdcConnect::SfdcRESTQuery
       crm_type "Account"
     end
-    account = TestQuery.retrieve "001V0000006FAyBIAW"    
+    account = TestQuery.find "001V0000006FAyBIAW"    
     account.respond_to?(:name).should be true
     account.respond_to?(:foozle).should be false
     account.name.should == "Saratech Inc."
@@ -59,7 +59,7 @@ describe SfdcConnect::BaseSfdcObject do
       crm_type "Account"
     end
 
-    account = TestQuery.retrieve "001V0000006FAyBIAW"    
+    account = TestQuery.find "001V0000006FAyBIAW"    
     account.respond_to?(:numberofemployees).should be true
     account.respond_to?(:number_of_employees).should be true
     account.numberofemployees.should == 30
@@ -70,7 +70,7 @@ describe SfdcConnect::BaseSfdcObject do
     class TestQuery < SfdcConnect::SfdcRESTQuery
       crm_type "Account"
     end
-    account = TestQuery.retrieve "001V0000006FAyBIAW"    
+    account = TestQuery.find "001V0000006FAyBIAW"    
     account.created_date.kind_of?(DateTime).should be true
     account.compliance_expiration_date.kind_of?(DateTime).should be true
     account.dnb_report_date.kind_of?(DateTime).should be true

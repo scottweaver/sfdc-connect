@@ -26,7 +26,7 @@ module SfdcConnect
 
     # Retrieves an object by its id.  Uses the name of the class as the 
     # object name.
-    def self.retrieve(id)
+    def self.find(id)
       execute_request resource_url(id)
     end
 
@@ -86,51 +86,49 @@ module SfdcConnect
         BaseSfdcObject.new(sobject)
       end
     end
-    
   end
   
   class BaseSfdcObject < SfdcRESTQuery
     include DateAssistant
 
-      def initialize(sobject={})               
-        @store = sobject.inject({}) do|h, so|                    
-          new_key = so[0].downcase.partition('__c')[0]
-          h[new_key] = so[1]
-          h
-        end
+    def initialize(sobject={})               
+      @store = sobject.inject({}) do|h, so|                    
+        new_key = so[0].downcase.partition('__c')[0]
+        h[new_key] = so[1]
+        h
       end
+    end
 
-      def respond_to?(method_id)
-        if(!super)
-          @store.include?(method_id.to_s) || @store.include?(method_id.to_s.delete("_"))
-        else
-          super
-        end
+    def respond_to?(method_id)
+      if(!super)
+        @store.include?(method_id.to_s) || @store.include?(method_id.to_s.delete("_"))
+      else
+        super
       end
+    end
 
-      def method_missing(method_id, *arguments, &block)
-        if(@store.include? method_id.to_s)
-          coherce_value(method_id.to_s, @store[method_id.to_s])
-        elsif(@store.include? method_id.to_s.delete("_"))
-          coherce_value(method_id.to_s.delete("_"), @store[method_id.to_s.delete("_")])
-        else
-          super
-        end
+    def method_missing(method_id, *arguments, &block)
+      if(@store.include? method_id.to_s)
+        coherce_value(method_id.to_s, @store[method_id.to_s])
+      elsif(@store.include? method_id.to_s.delete("_"))
+        coherce_value(method_id.to_s.delete("_"), @store[method_id.to_s.delete("_")])
+      else
+        super
       end
+    end
 
-      private
+    private
 
-      # Coherce certain string value into a more appropriate complex type if 
-      # appropriate
-      def coherce_value(name, value)
-        
-        if(date? value)          
-          DateTime.parse(value)
-        else
-          value
-        end        
-      end
-
+    # Coherce certain string value into a more appropriate complex type if 
+    # appropriate
+    def coherce_value(name, value)
+      
+      if(date? value)          
+        DateTime.parse(value)
+      else
+        value
+      end        
+    end
   end
 
   class Authenticator
