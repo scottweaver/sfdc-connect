@@ -1,19 +1,12 @@
 require "sfdc-connect/version"
 require 'httparty'
 require "cgi"
+require "sfdc-support"
 
 module SfdcConnect
 
   class << self
     attr_accessor :sfdc_login_url, :default_credentials, :sfdc_instance_url, :access_token
-  end
-
-  # Utility for validating reponses from SFDC REST calls
-  module ResponseValidator    
-    def validate_response(response)
-      raise "HTTP Error #{response.code}: #{response.parsed_response}" if response.code >= 400
-      raise "SFDC Error: #{response['error']} - #{response['error_description']}" if response["error"]
-    end
   end
 
   # Provides basic query and object access support.
@@ -40,9 +33,9 @@ module SfdcConnect
     # Retrieves ALL the objects of this type. WARNING, this call can take 
     # a large amount of time to complete and can return a huge dataset.  
     # You have been warned.
-    def self.all
-      execute_request query_url("SELECT name from #{resource_name}")
-    end
+    # def self.all
+      # execute_request query_url("SELECT name from #{resource_name}")
+    # end
 
     # Executes an arbitrary SOQL query.
     def self.search(soql)
@@ -97,6 +90,8 @@ module SfdcConnect
   end
   
   class BaseSfdcObject < SfdcRESTQuery
+    include DateAssistant
+
       def initialize(sobject={})               
         @store = sobject.inject({}) do|h, so|                    
           new_key = so[0].downcase.partition('__c')[0]
@@ -125,9 +120,12 @@ module SfdcConnect
 
       private
 
+      # Coherce certain string value into a more appropriate complex type if 
+      # appropriate
       def coherce_value(name, value)
-        if(name.include? "date")
-          DateTime.iso8601(value)
+        
+        if(date? value)          
+          DateTime.parse(value)
         else
           value
         end        

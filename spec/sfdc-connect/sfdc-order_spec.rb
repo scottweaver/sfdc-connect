@@ -3,8 +3,7 @@ require 'sfdc-order'
 
 describe SfdcConnect::Order do
   it "should retrieve a list of orders for an account" do
-    orders = SfdcConnect::Order.orders_for_account("001V0000006FAyB")
-    PP.pp orders
+    orders = SfdcConnect::Order.orders_for_account("001V0000006FAyB")    
     orders.should_not be nil    
   end
 end

@@ -4,7 +4,6 @@ require "sfdc-connect"
 describe SfdcConnect::Authenticator do
   it "Should be able to get the authentication token" do
     token = SfdcConnect::Authenticator.authenticate
-    p token
     token.should_not be nil
   end
 
@@ -31,7 +30,6 @@ describe SfdcConnect::SfdcRESTQuery do
     end
     account = TestQuery.retrieve "001V0000006FAyBIAW"
     account.should_not be nil    
-    PP.pp account
     account.name == "Saratech Inc."
   end
 
@@ -41,7 +39,6 @@ describe SfdcConnect::SfdcRESTQuery do
     end
     accounts = TestQuery.search "Select Id, Name from Account where Name ='Saratech Inc.'"
     accounts.should_not be nil  
-    PP.pp accounts 
     accounts[0]['Id'].should == "001V0000006FAyBIAW"
   end
 end
@@ -55,7 +52,6 @@ describe SfdcConnect::BaseSfdcObject do
     account.respond_to?(:name).should be true
     account.respond_to?(:foozle).should be false
     account.name.should == "Saratech Inc."
-    PP.pp account
   end
 
   it "Test alternate method name support" do
@@ -68,15 +64,15 @@ describe SfdcConnect::BaseSfdcObject do
     account.respond_to?(:number_of_employees).should be true
     account.numberofemployees.should == 30
     account.number_of_employees.should == 30
-    
-    PP.pp account
   end
 
-  it "Should correctly convert iso8601 dates to DateTiem objects" do
+  it "Should correctly convert iso8601 dates to DateTime objects" do
     class TestQuery < SfdcConnect::SfdcRESTQuery
       crm_type "Account"
     end
-    account = TestQuery.retrieve "001V0000006FAyBIAW"
+    account = TestQuery.retrieve "001V0000006FAyBIAW"    
     account.created_date.kind_of?(DateTime).should be true
+    account.compliance_expiration_date.kind_of?(DateTime).should be true
+    account.dnb_report_date.kind_of?(DateTime).should be true
   end
 end

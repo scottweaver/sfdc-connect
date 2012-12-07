@@ -4,7 +4,6 @@ require 'sfdc-account'
 describe SfdcConnect::Account do
   it "should description fetch a single account" do
     account = SfdcConnect::Account.retrieve("001V0000006FAyB")
-    PP.pp account
     account.should_not be nil    
   end
 
@@ -12,7 +11,7 @@ describe SfdcConnect::Account do
   #   accounts = SfdcConnect::Account.all
   #   PP.pp accounts
   #   accounts.should_not be nil
-    
+
   # end
 
 end
