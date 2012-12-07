@@ -77,6 +77,17 @@ describe SfdcConnect::BaseSfdcObject do
   end
 
   it "Should provide access to metadata" do
-    # metadata = 
+    metadata = TestQuery.metadata
+    metadata.should_not be nil
+    fields = 
+    PP.pp fields
+  end
+
+  it "Should provide access to field names" do
+    field_names = TestQuery.field_names
+    field_names.should_not be nil
+    field_names.include?("Id").should be true
+    field_names.include?("Name").should be true
+    PP.pp field_names
   end
 end

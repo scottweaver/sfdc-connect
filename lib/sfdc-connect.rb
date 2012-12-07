@@ -42,6 +42,17 @@ module SfdcConnect
       execute_request query_url(soql)
     end
 
+    def self.metadata
+      execute_request metadata_url
+    end
+
+    def self.field_names
+      @field_names = @field_names || metadata["fields"].collect do |obj|
+        obj["name"]
+      end
+      @field_names
+    end
+
     private
 
     def self.query_url(soql)
@@ -52,12 +63,18 @@ module SfdcConnect
       url="/services/data/v26.0/sobjects/#{resource_name}/#{id}"
     end
 
+    def self.metadata_url
+      url="/services/data/v26.0/sobjects/#{resource_name}/describe"
+    end
+
     def self.execute_request(url, result=[])      
       set_headers            
       response=get(SfdcConnect.sfdc_instance_url+url) 
       validate_response(response)      
-      if(response['records'])
+      if response['records']
         continue_request(response)
+      elsif response["fields"]
+        response
       else
         new_sfdc_object_instance(response.parsed_response)
       end
