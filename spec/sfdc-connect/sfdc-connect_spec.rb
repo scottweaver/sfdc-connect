@@ -24,55 +24,59 @@ describe SfdcConnect::Authenticator do
 end
 
 describe SfdcConnect::SfdcRESTQuery do
-  it "find an object by id" do    
+  before(:all) do
     class TestQuery < SfdcConnect::SfdcRESTQuery
       crm_type "Account"
     end
-    account = TestQuery.find "001V0000006FAyBIAW"
-    account.should_not be nil    
-    account.name == "Saratech Inc."
+
+    @account = TestQuery.find "001V0000006FAyBIAW" 
+  end
+
+  it "find an object by id" do    
+    @account = TestQuery.find "001V0000006FAyBIAW"
+    @account.should_not be nil    
+    @account.name == "Saratech Inc."
   end
 
   it "Should handle SOQL queries" do
-    class TestQuery < SfdcConnect::SfdcRESTQuery
-      crm_type "Account"
-    end
-    accounts = TestQuery.search "Select Id, Name from Account where Name ='Saratech Inc.'"
-    accounts.should_not be nil  
-    accounts[0]['Id'].should == "001V0000006FAyBIAW"
+    @accounts = TestQuery.search "Select Id, Name from Account where Name ='Saratech Inc.'"
+    @accounts.should_not be nil  
+    @accounts[0]['Id'].should == "001V0000006FAyBIAW"
   end
 end
 
 describe SfdcConnect::BaseSfdcObject do
-  it "tie query results to method calls." do
+  before(:all) do
     class TestQuery < SfdcConnect::SfdcRESTQuery
       crm_type "Account"
     end
-    account = TestQuery.find "001V0000006FAyBIAW"    
-    account.respond_to?(:name).should be true
-    account.respond_to?(:foozle).should be false
-    account.name.should == "Saratech Inc."
+
+    @account = TestQuery.find "001V0000006FAyBIAW"  
+  end
+
+  it "tie query results to method calls." do
+    @account = TestQuery.find "001V0000006FAyBIAW"    
+    @account.respond_to?(:name).should be true
+    @account.respond_to?(:foozle).should be false
+    @account.name.should == "Saratech Inc."
   end
 
   it "Test alternate method name support" do
-    class TestQuery < SfdcConnect::SfdcRESTQuery
-      crm_type "Account"
-    end
-
-    account = TestQuery.find "001V0000006FAyBIAW"    
-    account.respond_to?(:numberofemployees).should be true
-    account.respond_to?(:number_of_employees).should be true
-    account.numberofemployees.should == 30
-    account.number_of_employees.should == 30
+    @account = TestQuery.find "001V0000006FAyBIAW"    
+    @account.respond_to?(:numberofemployees).should be true
+    @account.respond_to?(:number_of_employees).should be true
+    @account.numberofemployees.should == 30
+    @account.number_of_employees.should == 30
   end
 
   it "Should correctly convert iso8601 dates to DateTime objects" do
-    class TestQuery < SfdcConnect::SfdcRESTQuery
-      crm_type "Account"
-    end
-    account = TestQuery.find "001V0000006FAyBIAW"    
-    account.created_date.kind_of?(DateTime).should be true
-    account.compliance_expiration_date.kind_of?(DateTime).should be true
-    account.dnb_report_date.kind_of?(DateTime).should be true
+    @account = TestQuery.find "001V0000006FAyBIAW"    
+    @account.created_date.kind_of?(DateTime).should be true
+    @account.compliance_expiration_date.kind_of?(DateTime).should be true
+    @account.dnb_report_date.kind_of?(DateTime).should be true
+  end
+
+  it "Should provide access to metadata" do
+    # metadata = 
   end
 end
