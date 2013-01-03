@@ -88,7 +88,11 @@ module SfdcConnect
     def self.execute_request(url, result=[])      
       set_headers            
       response=get(SfdcConnect.sfdc_instance_url+url) 
-      validate_response(response)      
+      validate_response response      
+      format_response response
+    end
+
+    def self.format_response(response)
       if response['records']
         continue_request(response)
       elsif response["fields"]
