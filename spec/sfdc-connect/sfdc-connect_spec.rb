@@ -34,14 +34,15 @@ describe SfdcConnect::SfdcRESTQuery do
 
   it "find an object by id" do    
     @account = TestQuery.find "001V0000006FAyBIAW"
-    @account.should_not be nil    
-    @account.name == "Saratech Inc."
+    expect(@account).to_not be nil    
+    expect(@account.name).to eq "Saratech Inc."
+
   end
 
   it "Should handle SOQL queries" do
     @accounts = TestQuery.search "Select Id, Name from Account where Name ='Saratech Inc.'"
-    @accounts.should_not be nil  
-    @accounts[0]['Id'].should == "001V0000006FAyBIAW"
+    expect(@accounts).not_to be nil
+    expect(@accounts[0]['Id']).to eq "001V0000006FAyBIAW"
   end
 
   it "Should support a simple 'where' method like ActiveRecord" do
@@ -59,36 +60,37 @@ describe SfdcConnect::BaseSfdcObject do
   end
 
   it "tie query results to method calls." do
-    @account = TestQuery.find "001V0000006FAyBIAW"    
-    @account.respond_to?(:name).should be true
-    @account.respond_to?(:foozle).should be false
-    @account.name.should == "Saratech Inc."
+    @account = TestQuery.find "001V0000006FAyBIAW"        
+    expect(@account.respond_to?(:name)).to be true
+    expect(@account.respond_to?(:foozle)).to be false    
+    expect(@account.name).to eq "Saratech Inc."
   end
 
   it "Test alternate method name support" do
-    @account = TestQuery.find "001V0000006FAyBIAW"    
-    @account.respond_to?(:numberofemployees).should be true
-    @account.respond_to?(:number_of_employees).should be true
-    @account.numberofemployees.should == 30
-    @account.number_of_employees.should == 30
+    @account = TestQuery.find "001V0000006FAyBIAW"        
+    expect(@account.respond_to?(:numberofemployees)).to be true    
+    expect(@account.respond_to?(:number_of_employees)).to be true    
+    expect(@account.numberofemployees).to eq 30    
+    expect(@account.number_of_employees).to eq 30
   end
 
   it "Should correctly convert iso8601 dates to DateTime objects" do
     @account = TestQuery.find "001V0000006FAyBIAW"    
-    @account.created_date.kind_of?(DateTime).should be true
-    @account.compliance_expiration_date.kind_of?(DateTime).should be true
-    @account.dnb_report_date.kind_of?(DateTime).should be true
+    expect(@account.created_date.kind_of?(DateTime)).to be true
+    expect(@account.compliance_expiration_date.kind_of?(DateTime)).to be true
+    expect(@account.dnb_report_date.kind_of?(DateTime)).to be true
   end
 
   it "Should provide access to metadata" do
-    metadata = TestQuery.metadata
-    metadata.should_not be nil
+    metadata = TestQuery.metadata    
+    expect(metadata).not_to be nil
   end
 
   it "Should provide access to field names" do
-    field_names = TestQuery.field_names
-    field_names.should_not be nil
-    field_names.include?("Id").should be true
-    field_names.include?("Name").should be true
+    field_names = TestQuery.field_names    
+    expect(field_names).not_to be nil    
+    expect(field_names.include?("Id")).to be true    
+    expect(field_names.include?("Name")).to be true
+
   end
 end

@@ -15,12 +15,12 @@ describe SfdcConnect::DateAssistant do
 
     dates.each do |date|
       p "Testing date: #{date}"
-      TestHarness.date?(date).should be true
+      expect(TestHarness.date?(date)).to be true
      end
 
     ["13/31/2005"].each do |not_date|
-      p "Testing NOT date: #{not_date}"
-      TestHarness.date?(not_date).should be false
+      p "Testing NOT date: #{not_date}"      
+      expect(TestHarness.date?(not_date)).not_to be true
     end
 
     check_date(dates[0], 2011, 12, 20)
@@ -38,12 +38,13 @@ describe SfdcConnect::QuerySupport do
   end
 
   it "Should sanatize arguments" do
-   out = @test_class.sanatize_to_string("test%') OR (Name LIKE '")
-   out.should == "test%\\') OR (Name LIKE \\'"    
+   out = @test_class.sanatize_to_string("test%') OR (Name LIKE '")   
+   expect(out).to eq "test%\\') OR (Name LIKE \\'"  
   end
 
   it "Should support '?' interpolation for argument" do
     out = @test_class.interpolate_where_clause("Id = '?' and employees = ?", ["123456", 30])
     out.should == "Id = '123456' and employees = 30"
+    expect(out).to eq "Id = '123456' and employees = 30"
   end
 end
