@@ -43,6 +43,10 @@ describe SfdcConnect::SfdcRESTQuery do
     @accounts.should_not be nil  
     @accounts[0]['Id'].should == "001V0000006FAyBIAW"
   end
+
+  it "Should support a simple 'where' method like ActiveRecord" do
+    
+  end
 end
 
 describe SfdcConnect::BaseSfdcObject do
@@ -79,8 +83,6 @@ describe SfdcConnect::BaseSfdcObject do
   it "Should provide access to metadata" do
     metadata = TestQuery.metadata
     metadata.should_not be nil
-    fields = 
-    PP.pp fields
   end
 
   it "Should provide access to field names" do
@@ -88,6 +90,5 @@ describe SfdcConnect::BaseSfdcObject do
     field_names.should_not be nil
     field_names.include?("Id").should be true
     field_names.include?("Name").should be true
-    PP.pp field_names
   end
 end

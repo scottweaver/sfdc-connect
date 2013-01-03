@@ -29,3 +29,21 @@ describe SfdcConnect::DateAssistant do
 
   end
 end
+
+describe SfdcConnect::QuerySupport do
+  before(:all) do
+    @test_class = Class.new do
+      extend SfdcConnect::QuerySupport
+    end
+  end
+
+  it "Should sanatize arguments" do
+   out = @test_class.sanatize_to_string("test%') OR (Name LIKE '")
+   out.should == "test%\\') OR (Name LIKE \\'"    
+  end
+
+  it "Should support '?' interpolation for argument" do
+    out = @test_class.interpolate_where_clause("Id = '?' and employees = ?", ["123456", 30])
+    out.should == "Id = '123456' and employees = 30"
+  end
+end

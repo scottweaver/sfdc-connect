@@ -12,9 +12,11 @@ module SfdcConnect
   # Provides basic query and object access support.
   class SfdcRESTQuery
     extend ResponseValidator
+    extend QuerySupport
     include HTTParty
 
     @crm_type
+    @query_fields
 
     # Use this to the set the SFDC type name (used in object requests)
     # if your class' name does not match.  This is helpful for custom
@@ -22,6 +24,13 @@ module SfdcConnect
     # fairly ugly class names.
     def self.crm_type(crm_type)
       @crm_type = crm_type
+    end
+
+    # Sets an array of field names that will be used in 
+    # 'where' and 'find' method calls.  If this is not set
+    # the value for the "field_names" method will be used.
+    def self.query_fields(query_fields)
+      @query_fields = query_fields
     end
 
     # Retrieves an object by its id.  Uses the name of the class as the 
@@ -42,8 +51,17 @@ module SfdcConnect
       execute_request query_url(soql)
     end
 
+    def self.where(where_clause, arguments=[])
+      search(<<-SOQL
+        Select #{@query_fields || field_names} from #{resource_name} where 
+         #{interpolate_where_clause(where_clause, arguments)}
+      SOQL
+      )
+    end
+
     def self.metadata
-      execute_request metadata_url
+      @metadata = @metadata || execute_request(metadata_url)
+      @metadata
     end
 
     def self.field_names
