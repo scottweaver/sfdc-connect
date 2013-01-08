@@ -9,6 +9,18 @@ module SfdcConnect
   class << self
     attr_accessor :sfdc_login_url, :default_credentials, :sfdc_instance_url, :access_token
   end
+
+  def self.query_url(soql)
+    "/services/data/v26.0/query/?q=#{CGI::escape(soql)}"                
+  end
+
+  def self.resource_url(id, resource_name)
+    "/services/data/v26.0/sobjects/#{resource_name}/#{id}"
+  end
+
+  def self.metadata_url(resource_name)
+    "/services/data/v26.0/sobjects/#{resource_name}/describe"
+  end
   
   class Authenticator
     include HTTParty

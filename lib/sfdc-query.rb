@@ -1,6 +1,6 @@
 module SfdcConnect 
   require "sfdc-connect"
-  
+
  # Provides basic query and object access support.
   class SfdcRESTQuery
     extend ResponseValidator
@@ -22,13 +22,13 @@ module SfdcConnect
     # 'where' and 'find' method calls.  If this is not set
     # the value for the "field_names" method will be used.
     def self.query_fields(query_fields)
-      @query_fields = query_fields
+      @query_fields = SfdcConnect.query_fields
     end
 
     # Retrieves an object by its id.  Uses the name of the class as the 
     # object name.
     def self.find(id)
-      execute_request resource_url(id)
+      execute_request SfdcConnect.resource_url(id, resource_name)
     end
 
     # Retrieves ALL the objects of this type. WARNING, this call can take 
@@ -40,7 +40,7 @@ module SfdcConnect
 
     # Executes an arbitrary SOQL query.
     def self.search(soql)
-      execute_request query_url(soql)
+      execute_request SfdcConnect.query_url(soql)
     end
 
     def self.where(where_clause, arguments=[])
@@ -52,7 +52,7 @@ module SfdcConnect
     end
 
     def self.metadata
-      @metadata = @metadata || execute_request(metadata_url)
+      @metadata = @metadata || execute_request(SfdcConnect.metadata_url(resource_name))
       @metadata
     end
 
@@ -64,18 +64,6 @@ module SfdcConnect
     end
 
     private
-
-    def self.query_url(soql)
-      "/services/data/v26.0/query/?q=#{CGI::escape(soql)}"                
-    end
-
-    def self.resource_url(id)
-      "/services/data/v26.0/sobjects/#{resource_name}/#{id}"
-    end
-
-    def self.metadata_url
-      "/services/data/v26.0/sobjects/#{resource_name}/describe"
-    end
 
     def self.execute_request(url, result=[], raw=false)      
       set_headers            

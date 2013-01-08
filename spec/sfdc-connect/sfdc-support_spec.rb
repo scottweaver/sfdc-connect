@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper.rb"
+require_relative "../spec_helper.rb"
 require 'sfdc-support'
 
 class TestHarness
