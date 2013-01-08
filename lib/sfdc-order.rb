@@ -1,5 +1,5 @@
 require "httparty"
-require "sfdc-connect"
+require "sfdc-object"
 
 module SfdcConnect
   class Order < BaseSfdcObject
