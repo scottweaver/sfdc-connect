@@ -14,4 +14,9 @@ describe SfdcConnect::Account do
 
   # end
 
+  it "Should fetch an account by SAP payer id" do
+    account = SfdcConnect::Account.account_by_payer_id('4062313')
+    expect(account.sap_payer_id).to eq '4062313'
+  end
+
 end
