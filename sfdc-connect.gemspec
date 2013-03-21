@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Sfdc::Connect::VERSION
   gem.authors       = ["Scott T Weaver"]
   gem.email         = ["scott.t.weaver@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{API for connecting to SFDC Force.com RESTful API}
+  gem.summary       = %q{API for connecting to SFDC Force.com RESTful API}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
