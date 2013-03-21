@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+For now, check out the specs for examples of usage.
 
 ## Contributing
 
