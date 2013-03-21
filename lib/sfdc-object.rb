@@ -3,12 +3,18 @@ module SfdcConnect
     
     include DateAssistant
 
-    def initialize(sobject={})               
-      @store = sobject.inject({}) do|h, so|                    
-        new_key = so[0].downcase.partition('__c')[0]
-        h[new_key] = so[1]
-        h
+    def initialize(sobject={})   
+      if (sobject.is_a? Array)     
+        sobject = sobject[0]      
       end
+      
+      @store = sobject.inject({}) do|h, so|            
+        if so[0]             
+          new_key = so[0].downcase.partition('__c')[0]
+          h[new_key] = so[1]
+          h
+        end
+      end || {}
     end
 
     def respond_to?(method_id)
