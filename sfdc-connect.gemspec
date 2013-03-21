@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["scott.t.weaver@gmail.com"]
   gem.description   = %q{API for connecting to SFDC Force.com RESTful API}
   gem.summary       = %q{API for connecting to SFDC Force.com RESTful API}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/scottweaver/sfdc-connect"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
