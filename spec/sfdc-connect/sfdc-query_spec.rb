@@ -23,7 +23,18 @@ describe SfdcConnect::SfdcRESTQuery do
     expect(@accounts[0]['Id']).to eq "001V0000006FAyBIAW"
   end
 
-  it "Should support a simple 'where' method like ActiveRecord" do
+  it "Should support a simple 'where' method" do
+    class TestWhere < SfdcConnect::SfdcRESTQuery
+      crm_type :Account
+      query_fields  "Id", "Name", "SAP_Payer_Id__c"
+    end
+    
+    result = TestWhere.where(
+      "SAP_Payer_Id__c = '?' and Partner_Account_Status__c='Active'", ['4062313'])
+
+    expect(result).to_not be nil
+    p result.inspect
+    expect(result[0]['SAP_Payer_ID__c']).to eq '4062313'
     
   end
 end

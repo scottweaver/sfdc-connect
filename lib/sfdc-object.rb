@@ -1,5 +1,6 @@
 module SfdcConnect
- class BaseSfdcObject < SfdcRESTQuery
+
+ class BaseSfdcObject < SfdcConnect::SfdcRESTQuery
     
     include DateAssistant
 
