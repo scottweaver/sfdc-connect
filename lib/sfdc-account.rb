@@ -3,16 +3,14 @@ require "sfdc-object"
 
 module SfdcConnect
   class Account < BaseSfdcObject
-    include HTTParty
-    extend ResponseValidator
 
-    def self.account_by_payer_id(payer_id, fields=[ "a.Id", "a.Name", "a.SAP_Payer_Id__c"])
-      result = search(%Q[Select #{fields.join(", ")} 
-              from Account a where a.SAP_Payer_Id__c = '#{payer_id}'
-              and a.Partner_Account_Status__c='Active'
-    ])
-      puts result.inspect
-      Account.new(result)
+     query_fields "Id", "Name", "SAP_Payer_Id__c"
+     crm_type :Account
+
+    def self.account_by_payer_id(payer_id)
+      result = where("SAP_Payer_Id__c = '?' and Partner_Account_Status__c='Active'", [payer_id])
+      p result.inspect
+      new(result[0])
     end
   end
 end
